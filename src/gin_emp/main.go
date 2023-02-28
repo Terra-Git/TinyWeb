@@ -6,7 +6,9 @@ import (
 	// "html/template"
 )
 
-var db = make(map[string]string)
+struct WebServer{
+	server := gin.Default()
+}
 
 func setupRouter() *gin.Engine {
 	// Disable Console Color
@@ -16,6 +18,24 @@ func setupRouter() *gin.Engine {
 	// Ping test
 	r.GET("/ping", func(c *gin.Context) {
 		c.String(http.StatusOK, "pong")
+	})
+
+	r.GET("/login", func(c *gin.Context) {
+		// 当使用DefaultQuery时，如果没有获取到浏览器输入的username，则返回设置defaultValue给username
+		username := c.Query("username")
+		if( username == ""){
+			c.String(http.StatusOK, "invilid param username")
+			return 
+		}
+		// 当使用Query时，如果没有获取到浏览器输入的password，则默认返回""空串
+		password := c.Query("password")
+		c.
+		// 返回json给浏览器
+		c.JSON(http.StatusOK, gin.H{
+			"message": "success",
+			"username": username,
+			"password": password,
+		})
 	})
 
     r.LoadHTMLFiles("load.html")
