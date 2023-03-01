@@ -44,24 +44,24 @@ func login_func(c *gin.Context) {
 }
 
 // 服务初始化
-func (server WebServer) init() *gin.Engine{
+func (server *WebServer) init() *gin.Engine{
 	server.engine_ = gin.Default()
 	server.init_method()
 	server.register()
 	return server.engine_
 }
 
-func (server WebServer) run(port string) {
+func (server *WebServer) run(port string) {
 	server.engine_.Run(port)
 }
 
-func (server WebServer) init_method() {
+func (server *WebServer) init_method() {
 	server.methods_ = append(server.methods_, HttpMethodNode{"GET", "/ping", ping_func})
 	server.methods_ = append(server.methods_, HttpMethodNode{"GET", "/login", login_func})
+
 }
 
-func (server WebServer) register() {
-	
+func (server *WebServer) register() {
 	for _,node := range  server.methods_{
 		var http_method = node.http_method_
 		if( http_method == "GET" ){
@@ -79,12 +79,12 @@ func (server WebServer) register() {
 }
 
 // 注册get方法
-func (server WebServer) get_method_router(method string, method_func func(c *gin.Context)) {
+func (server *WebServer) get_method_router(method string, method_func func(c *gin.Context)) {
 	server.engine_.GET(method,method_func)
 }
 
 // 注册post方法
-func (server WebServer) post_method_router(method string, method_func func(c *gin.Context)) {
+func (server *WebServer) post_method_router(method string, method_func func(c *gin.Context)) {
 	server.engine_.POST(method,method_func)
 }
 
