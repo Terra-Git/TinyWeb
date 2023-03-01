@@ -6,9 +6,7 @@ import (
 	// "html/template"
 )
 
-struct WebServer{
-	server := gin.Default()
-}
+var db = make(map[string]string)
 
 func setupRouter() *gin.Engine {
 	// Disable Console Color
@@ -31,7 +29,7 @@ func setupRouter() *gin.Engine {
 		password := c.Query("password")
 		c.
 		// 返回json给浏览器
-		c.JSON(http.StatusOK, gin.H{
+		c.JSON(http.StatusOK, gin.Header{
 			"message": "success",
 			"username": username,
 			"password": password,
