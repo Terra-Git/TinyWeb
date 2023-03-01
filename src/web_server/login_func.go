@@ -9,6 +9,9 @@ func Ping_func(c *gin.Context) {
 	c.String(http.StatusOK, "pong")
 }
 
+// 用户表，后续引入mysql？
+var user_map = map[string]string {"gyk":"gyk123",
+                                  "test":"test123"}
 
 // 登录回调
 func Login_func(c *gin.Context) {
