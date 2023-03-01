@@ -6,10 +6,7 @@ import (
 )
 
 func main() {
-	// server := web_server.WebServer{}
-	// server.Init()
-	// server.Run(":9000")
-	print("1")
-	mysql_client.Test();
-	print("2")
+	client  := mysql_client.MysqlClient{}
+	client.Connet()
+	client.Test()
 }
