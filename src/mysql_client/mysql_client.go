@@ -7,7 +7,7 @@ import(
 )
 
 func Test(){
-	DB, _ := sql.Open("mysql", "terra:kun123456@tcp(127.0.0.1:3306)/test")
+	DB, _ := sql.Open("mysql", "terra:password@tcp(127.0.0.1:3306)/test")
 	//设置数据库最大连接数
 	DB.SetConnMaxLifetime(100)
 	//设置上数据库最大闲置连接数
