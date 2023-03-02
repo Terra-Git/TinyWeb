@@ -22,17 +22,12 @@ type MysqlClient struct{
 
 func (client *MysqlClient) Connet(username string,password string,ip string,port string,dbName string,max_connect int){
 	client.connect_,_ = sql.Open("mysql", fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?charset=utf8", username, password, ip, port, dbName))
-
-	// client.connect_,_ = sql.Open("mysql", "terra:kun123456@tcp(127.0.0.1:3306)/test")
-
 	//设置上数据库最大闲置连接数
 	client.connect_.SetMaxIdleConns(max_connect)
 }
 
 func (client *MysqlClient) Connect( user MysqlUser){
 	client.connect_,_= sql.Open("mysql", fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?charset=utf8",user.Username_,user.Password_,user.Dp_ip_,user.Dp_port_,user.Dbname_))
-
-	// client.connect_,_ = sql.Open("mysql", "terra:kun123456@tcp(127.0.0.1:3306)/test")
 	//设置数据库最大连接数
 	client.connect_.SetMaxIdleConns(user.Max_connect_)
 }
