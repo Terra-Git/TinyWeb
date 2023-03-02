@@ -22,7 +22,7 @@ const (
     MYSQL_STRING      MysqlValueType = 1
 )
 
-type SqlData struct{
+type MysqlData struct{
 	key_     string
 	value_   string
 	type_    MysqlValueType
