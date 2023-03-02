@@ -7,7 +7,7 @@ import (
 
 func main() {
 	client := mysql_client.MysqlClient{}
-	mysql_user := mysql_client.MysqlUser{}
+	mysql_user := mysql_client.MysqlConnectIfo{}
 	
     mysql_user.Username_         = "terra"
 	mysql_user.Password_         = "kun123456"

@@ -6,7 +6,7 @@ import(
 	_ "github.com/go-sql-driver/mysql"
 )
 
-type MysqlUser struct{
+type MysqlConnectIfo struct{
 	Username_          string
 	Password_          string
 	Dp_ip_             string
@@ -15,10 +15,23 @@ type MysqlUser struct{
 	Max_connect_       int 
 }
 
+type MysqlValueType int32
+
+const (
+    MYSQL_INT         MysqlValueType = 0
+    MYSQL_STRING      MysqlValueType = 1
+)
+
+type SqlData struct{
+	key_     string
+	value_   string
+	type_    MysqlValueType
+}
+
 // 实现增删改查
 type MysqlClient struct{
 	connect_     *sql.DB
-	mysql_user_  MysqlUser
+	mysql_user_  MysqlConnectIfo
 }
 
 func (client *MysqlClient) Connet(username string,password string,ip string,port string,dbName string,max_connect int){
@@ -27,16 +40,32 @@ func (client *MysqlClient) Connet(username string,password string,ip string,port
 	client.connect_.SetMaxIdleConns(max_connect)
 }
 
-func (client *MysqlClient) Connect( user MysqlUser){
+func (client *MysqlClient) Connect( user MysqlConnectIfo){
 	client.mysql_user_ = user
 	client.connect_,_= sql.Open("mysql", fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?charset=utf8",user.Username_,user.Password_,user.Dp_ip_,user.Dp_port_,user.Dbname_))
 	//设置数据库最大连接数
 	client.connect_.SetMaxIdleConns(user.Max_connect_)
 }
 
-func (client *MysqlClient) query(){
-    
+func (client *MysqlClient) Insert_record(table_name string ){
+
 }
+
+func (client *MysqlClient) Delete_record(){
+
+}
+
+func (client *MysqlClient) Update_record(){
+
+}
+
+func (client *MysqlClient) Query_record(sql string){
+
+}
+
+
+
+
 
 func (client *MysqlClient) Test(){
 
@@ -46,4 +75,6 @@ func (client *MysqlClient) Test(){
 		return
 	}
 	fmt.Println("connnect success")
+
+	
 }
