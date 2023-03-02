@@ -15,6 +15,7 @@ type MysqlConnectIfo struct{
 	Max_connect_       int 
 }
 
+// mysql 值类型
 type MysqlValueType int32
 
 const (
@@ -22,10 +23,17 @@ const (
     MYSQL_STRING      MysqlValueType = 1
 )
 
-type MysqlData struct{
+// mysql 键值对数据
+type MysqlColData struct{
 	key_     string
 	value_   string
 	type_    MysqlValueType
+}
+
+type MysqlRowData struct{
+	table_name_   string
+	col_count_    int
+	row_data_     []MysqlColData
 }
 
 // 实现增删改查
@@ -62,9 +70,6 @@ func (client *MysqlClient) Update_record(){
 func (client *MysqlClient) Query_record(sql string){
 
 }
-
-
-
 
 
 func (client *MysqlClient) Test(){
