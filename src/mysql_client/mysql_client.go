@@ -17,7 +17,8 @@ type MysqlUser struct{
 
 // 实现增删改查
 type MysqlClient struct{
-	connect_  *sql.DB
+	connect_     *sql.DB
+	mysql_user_  MysqlUser
 }
 
 func (client *MysqlClient) Connet(username string,password string,ip string,port string,dbName string,max_connect int){
@@ -27,6 +28,7 @@ func (client *MysqlClient) Connet(username string,password string,ip string,port
 }
 
 func (client *MysqlClient) Connect( user MysqlUser){
+	client.mysql_user_ = user
 	client.connect_,_= sql.Open("mysql", fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?charset=utf8",user.Username_,user.Password_,user.Dp_ip_,user.Dp_port_,user.Dbname_))
 	//设置数据库最大连接数
 	client.connect_.SetMaxIdleConns(user.Max_connect_)
