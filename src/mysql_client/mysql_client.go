@@ -36,37 +36,45 @@ type MysqlClient struct{
 	mysql_user_  MysqlConnectIfo
 }
 
-func (client *MysqlClient) Connet(username string,password string,ip string,port string,dbName string,max_connect int){
-	client.connect_,_ = sql.Open("mysql", fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?charset=utf8", username, password, ip, port, dbName))
+func (this *MysqlClient) Connet(username string,password string,ip string,port string,dbName string,max_connect int){
+	this.mysql_user_ = MysqlConnectIfo{username,password,ip,port,dbName,max_connect}
+	this.connect_,_ = sql.Open("mysql", fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?charset=utf8", username, password, ip, port, dbName))
 	//设置上数据库最大闲置连接数
-	client.connect_.SetMaxIdleConns(max_connect)
+	this.connect_.SetMaxIdleConns(max_connect)
 }
 
-func (client *MysqlClient) Connect( user MysqlConnectIfo){
-	client.mysql_user_ = user
-	client.connect_,_= sql.Open("mysql", fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?charset=utf8",user.Username_,user.Password_,user.Dp_ip_,user.Dp_port_,user.Dbname_))
+func (this *MysqlClient) Connect( user MysqlConnectIfo){
+	this.mysql_user_ = user
+	this.connect_,_ = sql.Open("mysql", fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?charset=utf8",user.Username_,user.Password_,user.Dp_ip_,user.Dp_port_,user.Dbname_))
 	//设置数据库最大连接数
-	client.connect_.SetMaxIdleConns(user.Max_connect_)
+	this.connect_.SetMaxIdleConns(user.Max_connect_)
 }
 
-func (client *MysqlClient) Insert_record(table_name string, data []MysqlColData){
+func (this *MysqlClient) Insert_record(table_name string, data []MysqlColData) int {
+	sql := this.build_insert_sql(table_name,data)
+	return this.execute(sql)
+}
+
+func (this *MysqlClient) Insert_batch_record(table_name string, data [][]MysqlColData) int {
+	sql := this.build_batch_insert_sql(table_name,data)
+	return this.execute(sql)
+}
+
+func (this *MysqlClient) Delete_record(){
 
 }
 
-func (client *MysqlClient) Delete_record(){
+func (this *MysqlClient) Update_record(){
 
 }
 
-func (client *MysqlClient) Update_record(){
+func (this *MysqlClient) Query_record(sql string){
 
 }
 
-func (client *MysqlClient) Query_record(sql string){
-
-}
 
 // 组装一行的sql,注意增加空格
-func build_insert_sql(table_name string, data []MysqlColData) string {
+func (this *MysqlClient) build_insert_sql(table_name string, data []MysqlColData) string {
 	var s_columns_name string
 	var s_columns_value string
 
@@ -98,7 +106,7 @@ func build_insert_sql(table_name string, data []MysqlColData) string {
 }
 
 // 组装一行的sql,注意增加空格
-func build_batch_insert_sql(table_name string, data [][]MysqlColData) string {
+func (this *MysqlClient) build_batch_insert_sql(table_name string, data [][]MysqlColData) string {
 	var s_columns_name string
 	var s_columns_value string
 
@@ -135,10 +143,23 @@ func build_batch_insert_sql(table_name string, data [][]MysqlColData) string {
 	return sql
 }
 
-func (client *MysqlClient) Test_insert(){
+// 执行插入语句，返回 0 为成功
+func (this *MysqlClient) execute(sql string) int {
+
+	r, err := this.connect_.Exec(sql)
+	print(r)
+	if err != nil {
+		fmt.Println("exec failed,", err)
+		return 1
+	}
+	fmt.Println("insert succ")
+	return 0
+}
+
+func (this *MysqlClient) Test_insert(){
 
 	//验证连接
-	if err := client.connect_.Ping(); err != nil {
+	if err := this.connect_.Ping(); err != nil {
 		fmt.Println("open database fail")
 		return
 	}
@@ -159,8 +180,12 @@ func (client *MysqlClient) Test_insert(){
 	datas = append(datas,data)
 	datas = append(datas,data)
 
-	str := build_batch_insert_sql("student",datas);
-	print(str,"\n")
-	str = build_insert_sql("student",data)
-	print(str,"\n")
+	// this.Insert_batch_record("t_note_user",datas);
+
+	this.Insert_record("t_note_user",data)
+
+	// str := build_batch_insert_sql("student",datas);
+	// print(str,"\n")
+	// str = build_insert_sql("student",data)
+	// print(str,"\n")
 }
