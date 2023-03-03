@@ -30,6 +30,7 @@ type MysqlColData struct{
 	type_    MysqlValueType
 }
 
+// mysql 的行数据
 type MysqlRowData struct{
 	table_name_   string
 	col_count_    int
@@ -71,7 +72,6 @@ func (client *MysqlClient) Query_record(sql string){
 
 }
 
-
 func (client *MysqlClient) Test(){
 
 	//验证连接
@@ -81,5 +81,4 @@ func (client *MysqlClient) Test(){
 	}
 	fmt.Println("connnect success")
 
-	
 }
