@@ -18,5 +18,5 @@ func main() {
 
 	client.Connect(mysql_user)
 
-	client.Test()
+	client.Test_insert()
 }

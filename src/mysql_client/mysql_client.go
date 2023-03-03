@@ -30,13 +30,6 @@ type MysqlColData struct{
 	type_    MysqlValueType
 }
 
-// mysql 的行数据
-type MysqlRowData struct{
-	table_name_   string
-	col_count_    int
-	row_data_     []MysqlColData
-}
-
 // 实现增删改查
 type MysqlClient struct{
 	connect_     *sql.DB
@@ -56,7 +49,7 @@ func (client *MysqlClient) Connect( user MysqlConnectIfo){
 	client.connect_.SetMaxIdleConns(user.Max_connect_)
 }
 
-func (client *MysqlClient) Insert_record(table_name string, data []MysqlRowData){
+func (client *MysqlClient) Insert_record(table_name string, data []MysqlColData){
 
 }
 
@@ -73,13 +66,12 @@ func (client *MysqlClient) Query_record(sql string){
 }
 
 // 组装一行的sql,注意增加空格
-func build_insert_sql(table_name string, data []MysqlRowData) string {
+func build_insert_sql(table_name string, data []MysqlColData) string {
 	var s_columns_name string
 	var s_columns_value string
 
-	// 组装列
 	s_columns_name += " ("
-	for index,col := range data[0].row_data_{
+	for index,col := range data {
 		if index == 0 {
 			s_columns_name += "`" + col.column_ + "`"
 		}else{
@@ -89,8 +81,41 @@ func build_insert_sql(table_name string, data []MysqlRowData) string {
 	s_columns_name += ")"
 
 	s_columns_value += "("
+	for index,col := range data {
+		if index != 0{
+			s_columns_value += ","
+		}
+		if col.type_ == MYSQL_INT {
+			s_columns_value += col.value_ 
+		}else{
+			s_columns_value += "'" + col.value_ + "'" 
+		}
+	}
+	s_columns_value += ")"
+
+	var sql string = "insert into " + table_name + s_columns_name + " values " + s_columns_value + ";"
+	return sql
+}
+
+// 组装一行的sql,注意增加空格
+func build_batch_insert_sql(table_name string, data [][]MysqlColData) string {
+	var s_columns_name string
+	var s_columns_value string
+
+	// 组装列
+	s_columns_name += " ("
+	for index,col := range data[0] {
+		if index == 0 {
+			s_columns_name += "`" + col.column_ + "`"
+		}else{
+			s_columns_name += ",`" + col.column_ + "`"
+		}
+	}
+	s_columns_name += ")"
+
 	for i := 0; i < len(data); i++ {
-		for index,col := range data[i].row_data_{
+		s_columns_value += "("
+		for index,col := range data[i] {
 			if index != 0{
 				s_columns_value += ","
 			}
@@ -100,17 +125,17 @@ func build_insert_sql(table_name string, data []MysqlRowData) string {
 				s_columns_value += "'" + col.value_ + "'" 
 			}
 		}
+		s_columns_value += ")"
 		if i != len(data) - 1 {
 			s_columns_value += ","
 		}
 	}
-	s_columns_value += ")"
 
 	var sql string = "insert into " + table_name + s_columns_name + " values " + s_columns_value + ";"
 	return sql
 }
 
-func (client *MysqlClient) Test(){
+func (client *MysqlClient) Test_insert(){
 
 	//验证连接
 	if err := client.connect_.Ping(); err != nil {
@@ -121,14 +146,21 @@ func (client *MysqlClient) Test(){
 
 	var test1 MysqlColData = MysqlColData{"name","gyk",MYSQL_STRING}
 	var test2 MysqlColData = MysqlColData{"phone","123",MYSQL_INT}
-	var data MysqlRowData = MysqlRowData{"student",2,nil}
-	data.row_data_ = append(data.row_data_ , test1)
-	data.row_data_ = append(data.row_data_ , test2)
-	var datas []MysqlRowData
+	var test3 MysqlColData = MysqlColData{"address","hunan",MYSQL_STRING}
+
+	var data []MysqlColData
+
+	data = append(data , test1)
+	data = append(data , test2)
+	data = append(data , test3)
+
+	var datas [][]MysqlColData
+
 	datas = append(datas,data)
 	datas = append(datas,data)
 
-	str := build_insert_sql("student",datas);
+	str := build_batch_insert_sql("student",datas);
 	print(str,"\n")
-
+	str = build_insert_sql("student",data)
+	print(str,"\n")
 }
