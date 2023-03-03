@@ -25,7 +25,7 @@ const (
 
 // mysql 键值对数据
 type MysqlColData struct{
-	key_     string
+	column_  string
 	value_   string
 	type_    MysqlValueType
 }
@@ -56,7 +56,7 @@ func (client *MysqlClient) Connect( user MysqlConnectIfo){
 	client.connect_.SetMaxIdleConns(user.Max_connect_)
 }
 
-func (client *MysqlClient) Insert_record(table_name string ){
+func (client *MysqlClient) Insert_record(table_name string, data []MysqlRowData){
 
 }
 
@@ -72,6 +72,44 @@ func (client *MysqlClient) Query_record(sql string){
 
 }
 
+// 组装一行的sql,注意增加空格
+func build_insert_sql(table_name string, data []MysqlRowData) string {
+	var s_columns_name string
+	var s_columns_value string
+
+	// 组装列
+	s_columns_name += " ("
+	for index,col := range data[0].row_data_{
+		if index == 0 {
+			s_columns_name += "`" + col.column_ + "`"
+		}else{
+			s_columns_name += ",`" + col.column_ + "`"
+		}
+	}
+	s_columns_name += ")"
+
+	s_columns_value += "("
+	for i := 0; i < len(data); i++ {
+		for index,col := range data[i].row_data_{
+			if index != 0{
+				s_columns_value += ","
+			}
+			if col.type_ == MYSQL_INT {
+				s_columns_value += col.value_ 
+			}else{
+				s_columns_value += "'" + col.value_ + "'" 
+			}
+		}
+		if i != len(data) - 1 {
+			s_columns_value += ","
+		}
+	}
+	s_columns_value += ")"
+
+	var sql string = "insert into " + table_name + s_columns_name + " values " + s_columns_value + ";"
+	return sql
+}
+
 func (client *MysqlClient) Test(){
 
 	//验证连接
@@ -80,5 +118,17 @@ func (client *MysqlClient) Test(){
 		return
 	}
 	fmt.Println("connnect success")
+
+	var test1 MysqlColData = MysqlColData{"name","gyk",MYSQL_STRING}
+	var test2 MysqlColData = MysqlColData{"phone","123",MYSQL_INT}
+	var data MysqlRowData = MysqlRowData{"student",2,nil}
+	data.row_data_ = append(data.row_data_ , test1)
+	data.row_data_ = append(data.row_data_ , test2)
+	var datas []MysqlRowData
+	datas = append(datas,data)
+	datas = append(datas,data)
+
+	str := build_insert_sql("student",datas);
+	print(str,"\n")
 
 }
