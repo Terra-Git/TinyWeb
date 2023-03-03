@@ -25,9 +25,9 @@ const (
 
 // mysql 键值对数据
 type MysqlColData struct{
-	column_  string
-	value_   string
-	type_    MysqlValueType
+	Column_  string
+	Value_   string
+	Type_    MysqlValueType
 }
 
 // 实现增删改查
@@ -81,9 +81,9 @@ func (this *MysqlClient) build_insert_sql(table_name string, data []MysqlColData
 	s_columns_name += " ("
 	for index,col := range data {
 		if index == 0 {
-			s_columns_name += "`" + col.column_ + "`"
+			s_columns_name += "`" + col.Column_ + "`"
 		}else{
-			s_columns_name += ",`" + col.column_ + "`"
+			s_columns_name += ",`" + col.Column_ + "`"
 		}
 	}
 	s_columns_name += ")"
@@ -93,10 +93,10 @@ func (this *MysqlClient) build_insert_sql(table_name string, data []MysqlColData
 		if index != 0{
 			s_columns_value += ","
 		}
-		if col.type_ == MYSQL_INT {
-			s_columns_value += col.value_ 
+		if col.Type_ == MYSQL_INT {
+			s_columns_value += col.Value_ 
 		}else{
-			s_columns_value += "'" + col.value_ + "'" 
+			s_columns_value += "'" + col.Value_ + "'" 
 		}
 	}
 	s_columns_value += ")"
@@ -114,9 +114,9 @@ func (this *MysqlClient) build_batch_insert_sql(table_name string, data [][]Mysq
 	s_columns_name += " ("
 	for index,col := range data[0] {
 		if index == 0 {
-			s_columns_name += "`" + col.column_ + "`"
+			s_columns_name += "`" + col.Column_ + "`"
 		}else{
-			s_columns_name += ",`" + col.column_ + "`"
+			s_columns_name += ",`" + col.Column_ + "`"
 		}
 	}
 	s_columns_name += ")"
@@ -127,10 +127,10 @@ func (this *MysqlClient) build_batch_insert_sql(table_name string, data [][]Mysq
 			if index != 0{
 				s_columns_value += ","
 			}
-			if col.type_ == MYSQL_INT {
-				s_columns_value += col.value_ 
+			if col.Type_ == MYSQL_INT {
+				s_columns_value += col.Value_ 
 			}else{
-				s_columns_value += "'" + col.value_ + "'" 
+				s_columns_value += "'" + col.Value_ + "'" 
 			}
 		}
 		s_columns_value += ")"
