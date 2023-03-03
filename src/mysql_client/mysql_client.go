@@ -60,8 +60,9 @@ func (this *MysqlClient) Insert_batch_record(table_name string, data [][]MysqlCo
 	return this.execute(sql)
 }
 
-func (this *MysqlClient) Delete_record(){
-
+func (this *MysqlClient) Delete_record(table_name string, colunm_name string, column_value string ,value_type MysqlValueType) int {
+	var sql string = this.build_delete_sql(table_name,colunm_name,column_value,value_type)
+	return this.execute(sql)
 }
 
 func (this *MysqlClient) Update_record(){
@@ -141,6 +142,17 @@ func (this *MysqlClient) build_batch_insert_sql(table_name string, data [][]Mysq
 
 	var sql string = "insert into " + table_name + s_columns_name + " values " + s_columns_value + ";"
 	return sql
+}
+
+func (this *MysqlClient) build_delete_sql(table_name string, colunm_name string, column_value string ,value_type MysqlValueType) string {
+	var value string
+	if( value_type == MYSQL_INT){
+		value = column_value
+	}else{
+		value = "'" + column_value + "'"
+	}
+	var sql string = "delete from `" + table_name + "` where `" + colunm_name + "` =" + value + ";"
+	return sql;
 }
 
 // 执行插入语句，返回 0 为成功

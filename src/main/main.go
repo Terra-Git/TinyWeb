@@ -34,5 +34,7 @@ func main() {
 	datas = append(datas,data)
 	datas = append(datas,data)
 
-	client.Insert_record("t_note_user",data)
+	// client.Insert_record("t_note_user",data)
+
+	client.Delete_record("t_note_user","address","hunan",MYSQL_STRING)
 }
