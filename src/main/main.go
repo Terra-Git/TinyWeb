@@ -17,7 +17,7 @@ func main() {
 
 	client.Connect(mysql_user)
 
-	client.Test_insert()
+	// client.Test_insert()
 
 	test1 := MysqlColData{"name","gyk",MYSQL_STRING}
 	test2 := MysqlColData{"phone","123",MYSQL_INT}
@@ -33,8 +33,11 @@ func main() {
 
 	datas = append(datas,data)
 	datas = append(datas,data)
+	sql := "select * from t_note_user where `name`='gyk';"
+	client.Query_record(sql);
+
 
 	// client.Insert_record("t_note_user",data)
 
-	client.Delete_record("t_note_user","address","hunan",MYSQL_STRING)
+	// client.Delete_record("t_note_user","address","hunan",MYSQL_STRING)
 }

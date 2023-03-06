@@ -69,10 +69,43 @@ func (this *MysqlClient) Update_record(){
 
 }
 
-func (this *MysqlClient) Query_record(sql string){
+// 多返回值，查询到的数据行数和数据
+func (this *MysqlClient) Query_record(sql string) {
 
+    rows, _ := this.connect_.Query(sql)
+	
+    columns, _ := rows.Columns()
+    count := len(columns)
+    values := make([]interface{}, count)
+    valuePtrs := make([]interface{}, count)
+
+    for rows.Next() {
+        for i := range columns {
+            valuePtrs[i] = &values[i]
+        }
+
+        rows.Scan(valuePtrs...)
+
+        for i, col := range columns {
+            val := values[i]
+
+            b, ok := val.([]byte)
+            var v interface{}
+            if (ok) {
+                v = string(b)
+            } else {
+                v = val
+            }
+			
+			fmt.Println(col, v)
+        }
+    }
 }
 
+// 额外的接口，处理一些比较复杂的sql
+func (this *MysqlClient) Execute(sql string) int {
+    return this.execute(sql)
+}
 
 // 组装一行的sql,注意增加空格
 func (this *MysqlClient) build_insert_sql(table_name string, data []MysqlColData) string {
@@ -125,7 +158,7 @@ func (this *MysqlClient) build_batch_insert_sql(table_name string, data [][]Mysq
 	for i := 0; i < len(data); i++ {
 		s_columns_value += "("
 		for index,col := range data[i] {
-			if index != 0{
+			if index != 0 {
 				s_columns_value += ","
 			}
 			if col.Type_ == MYSQL_INT {
